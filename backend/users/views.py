@@ -43,5 +43,6 @@ def logout_view(request):
     if not user:
         return Response({'error': 'Not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-    Token.objects.delete(user=user)
+    token = Token.objects.get(user=user)
+    token.delete()
     return Response({'success': True}, status=status.HTTP_200_OK)
