@@ -1,7 +1,9 @@
 from rest_framework import viewsets
 from .models import SavedPassword
 from .serializers import PSManagerSerializer
-from .encryption import PasswordManagerEncryption
+from .services import api_encrypt_password
+
+
 # Create your views here.
 
 
@@ -17,13 +19,13 @@ class PSManagerViewSet(viewsets.ModelViewSet):
     serializer_class = PSManagerSerializer
     queryset = SavedPassword.objects.all()
 
+    def get_queryset(self):
+        return SavedPassword.objects.filter(user=self.request.user)
+
     def perform_create(self, serializer):
-        pme = PasswordManagerEncryption()
-        password = serializer.validated_data['password']
-        password, key = pme.encrypt_password(password)
+        serializer = api_encrypt_password(serializer, self.request.user)
+        serializer.save()
 
-        serializer.validated_data['user'] = self.request.user
-        serializer.validated_data['password'] = password
-        serializer.validated_data['key'] = key
-
+    def perform_update(self, serializer):
+        serializer = api_encrypt_password(serializer, self.request.user)
         serializer.save()

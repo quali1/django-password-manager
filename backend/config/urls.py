@@ -4,11 +4,11 @@ from rest_framework import routers
 
 from manager.views import PSManagerViewSet
 
-router = routers.SimpleRouter()
-router.register(r'psm', PSManagerViewSet)
+router = routers.DefaultRouter()
+router.register(r'saved-passwords', PSManagerViewSet, basename='saved-passwords')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
 ]

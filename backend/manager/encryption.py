@@ -39,10 +39,10 @@ class PasswordManagerEncryption:
         key = Fernet.generate_key()
         cipher = Fernet(key)
         encrypted_password = cipher.encrypt(password.encode())
-        return encrypted_password, key
+        return encrypted_password.decode('utf-8'), key.decode('utf-8')
 
     @staticmethod
-    def decrypt_password(encrypted_password: bytes, key: bytes) -> str:
+    def decrypt_password(encrypted_password: str, key: str) -> str:
         """
         Decrypts an encrypted password using Fernet.
 
@@ -50,6 +50,8 @@ class PasswordManagerEncryption:
         :param key: The encryption key.
         :return: The decrypted password.
         """
+        encrypted_password = bytes(encrypted_password, 'utf-8')
+        key = bytes(key, 'utf-8')
         cipher = Fernet(key)
         decrypted_password = cipher.decrypt(encrypted_password).decode()
         return decrypted_password
