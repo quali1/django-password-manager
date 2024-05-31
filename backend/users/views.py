@@ -38,4 +38,10 @@ def test_token_view(request):
 
 @api_view(['POST'])
 def logout_view(request):
-    return Response({})
+    user = get_object_or_404(User, username=request.data['username'])
+
+    if not user:
+        return Response({'error': 'Not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    Token.objects.delete(user=user)
+    return Response({'success': True}, status=status.HTTP_200_OK)
