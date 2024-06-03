@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from users.models import Profile
 
 
 # Create your models here.
 
 class SavedPassword(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='saved_passwords')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, related_name='saved_passwords')
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=256)
     key = models.CharField(max_length=256)

@@ -1,10 +1,32 @@
-from rest_framework import status
+from manager.encryption import PasswordUserEncryption
+from .serializers import UserSerializer, ProfileSerializer
+from .models import Profile
+
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
-from .serializers import UserSerializer
 from django.shortcuts import get_object_or_404
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        pue = PasswordUserEncryption()
+
+        pin = serializer.validated_data['pin']
+        hashed_pin = pue.encrypt_password(pin)
+
+        serializer.validated_data['user'] = self.request.user
+        serializer.validated_data['pin'] = hashed_pin
+
+        return serializer.save()
 
 
 @api_view(['POST'])
