@@ -31,11 +31,6 @@ def signup_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-def test_token_view(request):
-    return Response({})
-
-
 @api_view(['POST'])
 def logout_view(request):
     user = get_object_or_404(User, username=request.data['username'])
