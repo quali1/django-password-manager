@@ -1,6 +1,7 @@
+from django.db.migrations import serializer
 from manager.encryption import PasswordUserEncryption
 from .serializers import UserSerializer, ProfileSerializer
-from .models import Profile
+from .models import Profile, ProfileCategories
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
@@ -27,6 +28,23 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer.validated_data['pin'] = hashed_pin
 
         return serializer.save()
+
+
+@api_view(['POST'])
+def check_profile_pin_view(request):
+    pue = PasswordUserEncryption()
+    category_id = request.data['category_id']
+    pin = request.data['pin']
+
+    get_object_or_404(ProfileCategories, id=category_id)
+
+    hashed_pin = Profile.objects.get(user=request.user, category=category_id).pin
+    check_result = pue.check_password(pin, hashed_pin)
+
+    if not check_result:
+        return Response({'error': 'Provided password pin incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'Token': 'test_token'})
 
 
 @api_view(['POST'])

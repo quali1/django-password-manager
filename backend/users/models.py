@@ -14,7 +14,7 @@ class ProfileCategories(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
     category = models.ForeignKey(ProfileCategories, on_delete=models.CASCADE)
     pin = models.CharField(max_length=256, null=True, blank=True)
 
