@@ -40,7 +40,7 @@ def check_profile_pin_view(request):
     check_result = pue.check_password(pin, hashed_pin)
 
     if not check_result:
-        return Response({'error': 'Provided password pin incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Provided pin is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'Token': 'test_token'})
 
