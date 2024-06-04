@@ -1,4 +1,4 @@
-from .models import Profile
+from .models import Profile, ProfileCategories
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -20,3 +20,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         if len(value) < 4 or len(value) > 6:
             raise serializers.ValidationError("Pin must be between 4 and 6 characters long")
         return value
+
+
+class UserProfileTokenSerializer(serializers.Serializer):
+    class Meta:
+        model = ProfileCategories
+        fields = '__all__'

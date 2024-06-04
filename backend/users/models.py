@@ -27,4 +27,6 @@ class UserProfileToken(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='profile_token')
     token = models.CharField(max_length=256, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.id}: {self.profile}"

@@ -1,10 +1,10 @@
 import uuid
 
 from manager.encryption import PasswordUserEncryption
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer, UserProfileTokenSerializer
 from .models import Profile, ProfileCategories, UserProfileToken
 from .services import api_encrypt_profile_pin
-from .tasks import delete_expired_tokens
+from .tasks import delete_token
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
@@ -47,8 +47,24 @@ def check_profile_pin_view(request):
 
 
 @api_view(['POST'])
-def profile_login_view(request):
-    pass
+def enter_profile_view(request):
+    user = request.user
+    profile_id = request.data.get('profile_id')
+
+    profile = get_object_or_404(Profile, id=profile_id, user=user)
+
+    UserProfileToken.objects.filter(user=user, profile=profile).delete()
+
+    token = str(uuid.uuid4())
+    user_profile_token = UserProfileToken.objects.create(
+        user=user,
+        profile=profile,
+        token=token
+    )
+
+    delete_token.apply_async((user_profile_token.id,), countdown=1800)
+
+    return Response({'token': token}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

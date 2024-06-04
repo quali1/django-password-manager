@@ -24,6 +24,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
     environment:
       - DEBUG=True
       - DB_NAME=password_manager_database
@@ -32,6 +33,7 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
   celery:
     build:
@@ -43,6 +45,16 @@ services:
     depends_on:
       - db
       - redis
+      - web
+    environment:
+      - DEBUG=True
+      - DB_NAME=password_manager_database
+      - DB_USER=ps_user
+      - DB_PASSWORD=ps_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
   celery-beat:
     build:
@@ -54,6 +66,15 @@ services:
     depends_on:
       - db
       - redis
+    environment:
+      - DEBUG=True
+      - DB_NAME=password_manager_database
+      - DB_USER=ps_user
+      - DB_PASSWORD=ps_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
 volumes:
   postgres_data:
