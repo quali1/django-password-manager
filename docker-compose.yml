@@ -1,13 +1,4 @@
 services:
-  redis:
-    image: redis
-    restart: always
-    ports:
-      - 6379:6379
-    volumes:
-      - redis_data_a:/data
-    entrypoint: redis-server --appendonly yes
-
   db:
     image: postgres:15
     volumes:
@@ -16,6 +7,11 @@ services:
       POSTGRES_DB: password_manager_database
       POSTGRES_USER: ps_user
       POSTGRES_PASSWORD: ps_password
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_data:/data
 
   web:
     build:
@@ -35,7 +31,30 @@ services:
       - DB_PASSWORD=ps_password
       - DB_HOST=db
       - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  celery:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command: celery -A your_project_name beat --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+      - redis
 
 volumes:
   postgres_data:
-  redis_data_a:
+  redis_data:

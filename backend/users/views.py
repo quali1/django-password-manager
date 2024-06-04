@@ -1,7 +1,10 @@
+import uuid
+
 from manager.encryption import PasswordUserEncryption
 from .serializers import UserSerializer, ProfileSerializer
-from .models import Profile, ProfileCategories
+from .models import Profile, ProfileCategories, UserProfileToken
 from .services import api_encrypt_profile_pin
+from .tasks import delete_expired_tokens
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
