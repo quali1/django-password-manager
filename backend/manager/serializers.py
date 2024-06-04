@@ -16,5 +16,5 @@ class PSManagerSerializer(serializers.ModelSerializer):
             key = representation['key']
             password = representation['password']
             decrypted_password = pse.decrypt_password(password, key)
-            representation['decrypted_password'] = decrypted_password
+            representation['password'] = decrypted_password
         return representation

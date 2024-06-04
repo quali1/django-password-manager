@@ -1,4 +1,13 @@
 services:
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data_a:/data
+    entrypoint: redis-server --appendonly yes
+
   db:
     image: postgres:15
     volumes:
@@ -29,3 +38,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data_a:

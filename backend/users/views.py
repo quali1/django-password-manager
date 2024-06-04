@@ -44,6 +44,11 @@ def check_profile_pin_view(request):
 
 
 @api_view(['POST'])
+def profile_login_view(request):
+    pass
+
+
+@api_view(['POST'])
 def login_view(request):
     user = get_object_or_404(User, username=request.data['username'])
 
