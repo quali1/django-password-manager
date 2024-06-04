@@ -1,7 +1,7 @@
-from django.db.migrations import serializer
 from manager.encryption import PasswordUserEncryption
 from .serializers import UserSerializer, ProfileSerializer
 from .models import Profile, ProfileCategories
+from .services import api_encrypt_profile_pin
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
@@ -14,20 +14,18 @@ from django.shortcuts import get_object_or_404
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    pue = PasswordUserEncryption()
 
     def get_queryset(self):
         return Profile.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        pue = PasswordUserEncryption()
+        serializer = api_encrypt_profile_pin(serializer, self.request.user)
+        serializer.save()
 
-        pin = serializer.validated_data['pin']
-        hashed_pin = pue.encrypt_password(pin)
-
-        serializer.validated_data['user'] = self.request.user
-        serializer.validated_data['pin'] = hashed_pin
-
-        return serializer.save()
+    def perform_update(self, serializer):
+        serializer = api_encrypt_profile_pin(serializer, self.request.user)
+        serializer.save()
 
 
 @api_view(['POST'])
