@@ -1,0 +1,62 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("@/assets/fonts/Roboto/Roboto-Thin.ttf") format("truetype");
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("@/assets/fonts/Roboto/Roboto-Light.ttf") format("truetype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("@/assets/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body, button {
+  color: $text-color;
+  font-family: Roboto;
+  font-weight: 300;
+}
+
+input, textarea {
+  outline: none;
+  appearance: none;
+  font-family: Roboto;
+  font-weight: 300;
+}
+
+button, a {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity $transition;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $light-main-color;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
