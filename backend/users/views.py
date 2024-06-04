@@ -31,12 +31,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def check_profile_pin_view(request):
     pue = PasswordUserEncryption()
-    category_id = request.data['category_id']
+    profile_id = request.data['profile_id']
     pin = request.data['pin']
 
-    get_object_or_404(ProfileCategories, id=category_id)
-
-    hashed_pin = Profile.objects.get(user=request.user, category=category_id).pin
+    hashed_pin = get_object_or_404(Profile, id=profile_id).pin
     check_result = pue.check_password(pin, hashed_pin)
 
     if not check_result:
