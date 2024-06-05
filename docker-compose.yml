@@ -60,7 +60,7 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
-    command: celery -A your_project_name beat --loglevel=info
+    command: celery -A config beat --loglevel=info
     volumes:
       - ./backend:/app
     depends_on:

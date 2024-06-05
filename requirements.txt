@@ -8,3 +8,4 @@ PyJWT==2.8.0
 celery==5.4.0
 redis==5.0.4
 django-celery-beat==2.6.0
+django-cors-headers==4.3.1
