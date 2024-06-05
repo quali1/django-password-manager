@@ -101,3 +101,16 @@ def logout_view(request):
     token = Token.objects.get(user=user)
     token.delete()
     return Response({'success': True}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def get_session_info_view(request):
+    token_key = request.data['token']
+    if not token_key:
+        return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = get_object_or_404(Token, key=token_key)
+    user = token.user
+
+    return Response({'token': token.key, 'user_id': user.id, 'username': user.username, 'email': user.email},
+                    status=status.HTTP_201_CREATED)

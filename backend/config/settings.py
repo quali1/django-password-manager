@@ -110,7 +110,7 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     'delete_expired_tokens': {
         'task': 'users.tasks.delete_expired_tokens',
-        'schedule': 60.0,
+        'schedule': 1800.0,
     },
 }
 
