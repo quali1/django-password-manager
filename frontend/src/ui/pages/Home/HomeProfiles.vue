@@ -3,7 +3,7 @@
     <div
       class="profile"
       :class="{
-        active: profile.id == activeProfile.id,
+        active: profile.id === activeProfile.id,
       }"
       v-for="profile in profiles"
       :key="profile.id"

@@ -4,12 +4,12 @@ import router from "@/router";
 import store from "@/store";
 
 router.beforeEach(async (to, from, next) => {
-  store.dispatch("auth/getSession");
-  if (to.meta.requiresAuth && !store.state.auth.authenticated) {
+  store.dispatch("auth/session");
+  if (to.meta.requiresAuth && !store.state.auth.token) {
     next({ name: "login" });
   }
 
-  if (to.name === "login" && store.state.auth.authenticated) {
+  if (to.name === "login" && store.state.auth.token) {
     next({ name: "home" });
   } else next();
 });

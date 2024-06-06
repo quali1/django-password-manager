@@ -6,8 +6,13 @@
     <div class="buttons">
       <slot name="buttons"></slot>
     </div>
-    <div class="links">
-      <slot name="links"></slot>
+    <div class="text">
+      <div class="errors">
+        <slot name="errors"></slot>
+      </div>
+      <div class="links">
+        <slot name="links"></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +43,7 @@
     color: $dark-text-color;
     font-size: 20px;
     letter-spacing: 3.6px;
+    transition: color $transition;
   }
 }
 
@@ -51,9 +57,19 @@
   text-transform: uppercase;
 }
 
-.links {
-  margin-top: -5px;
+.text {
   text-align: center;
+  margin-top: -5px;
+}
+
+.errors > * {
+  color: $red-color;
+  font-size: 18px;
+  letter-spacing: 3.6px;
+}
+
+.links {
+  margin-top: -2px;
 
   & > * {
     color: $dark-text-color;
@@ -61,10 +77,10 @@
     letter-spacing: 2.8px;
     line-height: 150%;
     transition: opacity $transition;
-  }
 
-  & > *:hover {
-    opacity: 0.8;
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 </style>

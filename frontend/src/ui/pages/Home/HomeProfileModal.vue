@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 import HomeProfiles from "@/ui/pages/Home/HomeProfiles";
 import ButtonComponent from "@/ui/components/ButtonComponent";
@@ -50,10 +50,7 @@ export default {
     HomeProfiles,
   },
   methods: {
-    logout() {
-      this.$store.commit("auth/logout");
-      this.$router.push({ name: "login" });
-    },
+    ...mapActions("auth", ["logout"]),
   },
   computed: {
     ...mapState("profiles", ["profiles", "activeProfile"]),

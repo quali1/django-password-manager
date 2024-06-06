@@ -14,34 +14,30 @@
         <span class="icon">></span>
       </template>
     </icon-button-component>
-    <div class="content-wrapper" ref="contentWrapper">
-      <div class="content">
-        <slot name="content"></slot>
-      </div>
-    </div>
+    <expandable-component :active="active">
+      <div class="content"><slot name="content"></slot></div>
+    </expandable-component>
   </div>
 </template>
 
 <script>
 import IconButtonComponent from "@/ui/components/IconButtonComponent";
+import ExpandableComponent from "@/ui/components/ExpandableComponent";
 
 export default {
   components: {
     IconButtonComponent,
+    ExpandableComponent,
   },
   data() {
     return {
       active: false,
-      contentHeight: null,
     };
   },
   methods: {
     toggle() {
       this.active = !this.active;
     },
-  },
-  mounted() {
-    this.contentHeight = this.$refs.contentWrapper.scrollHeight + "px";
   },
 };
 </script>
@@ -51,21 +47,11 @@ export default {
   border-radius: $border-radius;
   overflow: hidden;
   position: relative;
-
-  &:not(.active) .content-wrapper {
-    max-height: 0;
-  }
 }
 
 .button {
   width: 100%;
   border-radius: 0;
-}
-
-.content-wrapper {
-  max-height: v-bind(contentHeight);
-  transition: max-height $fast-transition;
-  overflow: hidden;
 }
 
 .content {
@@ -79,7 +65,7 @@ export default {
   position: absolute;
   font-size: 20px;
   color: $blue-color;
-  transition: transform $fast-transition;
+  transition: transform $transition;
 }
 
 .active .icon {
