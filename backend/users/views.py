@@ -93,19 +93,16 @@ def signup_view(request):
 
 @api_view(['POST'])
 def logout_view(request):
-    user = get_object_or_404(User, username=request.data['username'])
-
-    if not user:
-        return Response({'error': 'Not found'}, status=status.HTTP_400_BAD_REQUEST)
-
-    token = Token.objects.get(user=user)
+    token = get_object_or_404(Token, key=request.headers.get('token'))
     token.delete()
+
     return Response({'success': True}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def get_session_info_view(request):
-    token_key = request.data['token']
+    token_key = request.headers.get('token')
+
     if not token_key:
         return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
