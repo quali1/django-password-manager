@@ -2,11 +2,7 @@ import { convertAxiosErrors, axiosRequest } from "@/connectors/helpers";
 
 async function logoutRequest(token) {
   try {
-    void token;
-    // return await axiosRequest("POST", "/api/auth/login/", {
-    //   username: username,
-    //   password: password,
-    // });
+    return await axiosRequest("POST", "/api/auth/logout/", {}, token);
   } catch (error) {
     convertAxiosErrors(error);
   }
@@ -14,11 +10,7 @@ async function logoutRequest(token) {
 
 async function sessionRequest(token) {
   try {
-    void token;
-    // return await axiosRequest("POST", "/api/auth/login/", {
-    //   username: username,
-    //   password: password,
-    // });
+    return await axiosRequest("POST", "/api/auth/session/", {}, token);
   } catch (error) {
     convertAxiosErrors(error);
   }

@@ -13,13 +13,18 @@ function parseErrorData(data) {
   }
 }
 
-async function axiosRequest(method, subUrl, data) {
+async function axiosRequest(method, subUrl, data, token = "") {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["token"] = token;
+  }
+
   return await axios({
     method: method,
     url: BASE_URL + subUrl,
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
     data: JSON.stringify(data),
   });
 }

@@ -41,10 +41,13 @@ const actions = {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        await sessionRequest(token);
+        const res = await sessionRequest(token);
+        console.log(res);
         commit("setToken", token);
+        router.push({ name: "home" });
       } catch {
         localStorage.setItem("token", "");
+        router.push({ name: "login" });
       }
     }
   },
@@ -64,7 +67,8 @@ const actions = {
     }
   },
   async logout({ dispatch, state }) {
-    await logoutRequest(state.token);
+    const res = await logoutRequest(state.token);
+    console.log(res);
     dispatch("clearToken");
     router.push({ name: "login" });
   },

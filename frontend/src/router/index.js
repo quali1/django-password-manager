@@ -8,11 +8,13 @@ const routes = [
     path: "/login",
     name: "login",
     component: LoginView,
+    meta: { auth: true },
   },
   {
     path: "/registration",
     name: "registration",
     component: RegistrationView,
+    meta: { auth: true },
   },
   {
     path: "/",
