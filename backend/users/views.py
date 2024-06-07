@@ -3,7 +3,7 @@ import uuid
 from manager.encryption import PasswordUserEncryption
 from .serializers import UserSerializer, ProfileSerializer, UserProfileTokenSerializer
 from .models import Profile, ProfileCategories, UserProfileToken
-from .services import api_encrypt_profile_pin
+from .services import api_encrypt_profile_pin, get_user_from_token
 from .tasks import delete_token
 
 from rest_framework import status, viewsets
@@ -19,15 +19,19 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     pue = PasswordUserEncryption()
 
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        self.user = get_user_from_token(request)
+
     def get_queryset(self):
-        return Profile.objects.filter(user=self.request.user)
+        return Profile.objects.filter(user=self.user)
 
     def perform_create(self, serializer):
-        serializer = api_encrypt_profile_pin(serializer, self.request.user)
+        serializer = api_encrypt_profile_pin(serializer, self.user)
         serializer.save()
 
     def perform_update(self, serializer):
-        serializer = api_encrypt_profile_pin(serializer, self.request.user)
+        serializer = api_encrypt_profile_pin(serializer, self.user)
         serializer.save()
 
 
