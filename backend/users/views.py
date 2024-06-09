@@ -64,7 +64,7 @@ def logout_view(request):
         return Response({'error': 'Token not found in cookies'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def get_session_info_view(request):
     token_key = request.COOKIES.get('session_token')
 
