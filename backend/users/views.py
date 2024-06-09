@@ -53,7 +53,9 @@ def logout_view(request):
     token_key = request.COOKIES.get('session_token')
 
     if token_key:
-        token = get_object_or_404(Token, key=token_key)
+        token = Token.objects.get(key=token_key)
+        if not token:
+            return Response({'error': 'Token not found'}, status=status.HTTP_401_UNAUTHORIZED)
         token.delete()
 
         response = Response({'success': True}, status=status.HTTP_200_OK)
@@ -71,9 +73,11 @@ def get_session_info_view(request):
     if not token_key:
         return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-    token = get_object_or_404(Token, key=token_key)
-    user = token.user
+    token = Token.objects.get(key=token_key)
+    if not token:
+        return Response({'error': 'Token not found'}, status=status.HTTP_401_UNAUTHORIZED)
 
+    user = token.user
     return Response({'user_id': user.id, 'username': user.username, 'email': user.email},
                     status=status.HTTP_201_CREATED)
 
