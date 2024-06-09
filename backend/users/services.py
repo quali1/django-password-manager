@@ -15,6 +15,6 @@ def api_encrypt_profile_pin(serializer, user):
 
 
 def get_user_from_token(request):
-    token_key = request.headers.get('token')
+    token_key = request.COOKIES.get('session_token')
     token = get_object_or_404(Token, key=token_key)
     return token.user

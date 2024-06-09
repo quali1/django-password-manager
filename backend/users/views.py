@@ -14,6 +14,70 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 
+@api_view(['POST'])
+def login_view(request):
+    user = get_object_or_404(User, username=request.data['username'])
+
+    if not user.check_password(request.data['password']):
+        return Response({'error': 'Not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    token, created = Token.objects.get_or_create(user=user)
+    serializer = UserSerializer(instance=user)
+
+    response = Response({'user': serializer.data}, status=status.HTTP_200_OK)
+    response.set_cookie(key='session_token', value=token, httponly=True, samesite='Lax', max_age=2592000)
+
+    return response
+
+
+@api_view(['POST'])
+def signup_view(request):
+    serializer = UserSerializer(data=request.data)
+
+    if serializer.is_valid():
+        user = serializer.save()
+        user.set_password(request.data['password'])
+        user.save()
+        token = Token.objects.create(user=user)
+
+        response = Response({'user': serializer.data}, status=status.HTTP_201_CREATED)
+        response.set_cookie(key='session_token', value=token, httponly=True, samesite='Lax', max_age=2592000)
+
+        return response
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def logout_view(request):
+    token_key = request.COOKIES.get('session_token')
+
+    if token_key:
+        token = get_object_or_404(Token, key=token_key)
+        token.delete()
+
+        response = Response({'success': True}, status=status.HTTP_200_OK)
+        response.delete_cookie('auth_token')
+
+        return response
+    else:
+        return Response({'error': 'Token not found in cookies'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def get_session_info_view(request):
+    token_key = request.COOKIES.get('session_token')
+
+    if not token_key:
+        return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    token = get_object_or_404(Token, key=token_key)
+    user = token.user
+
+    return Response({'user_id': user.id, 'username': user.username, 'email': user.email},
+                    status=status.HTTP_201_CREATED)
+
+
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -69,49 +133,3 @@ def enter_profile_view(request):
     delete_token.apply_async((user_profile_token.id,), countdown=1800)
 
     return Response({'token': token}, status=status.HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-def login_view(request):
-    user = get_object_or_404(User, username=request.data['username'])
-
-    if not user.check_password(request.data['password']):
-        return Response({'error': 'Not found'}, status=status.HTTP_400_BAD_REQUEST)
-
-    token, created = Token.objects.get_or_create(user=user)
-    serializer = UserSerializer(instance=user)
-    return Response({"token": token.key, 'user': serializer.data}, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def signup_view(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        user = serializer.save()
-        user.set_password(request.data['password'])
-        user.save()
-        token = Token.objects.create(user=user)
-        return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-def logout_view(request):
-    token = get_object_or_404(Token, key=request.headers.get('token'))
-    token.delete()
-
-    return Response({'success': True}, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def get_session_info_view(request):
-    token_key = request.headers.get('token')
-
-    if not token_key:
-        return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-    token = get_object_or_404(Token, key=token_key)
-    user = token.user
-
-    return Response({'token': token.key, 'user_id': user.id, 'username': user.username, 'email': user.email},
-                    status=status.HTTP_201_CREATED)

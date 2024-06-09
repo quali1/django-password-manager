@@ -28,9 +28,9 @@ class PSManagerViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = PSManagerFilter
 
-    # def initial(self, request, *args, **kwargs):
-    #     super().initial(request, *args, **kwargs)
-    #     self.user = get_user_from_token(request)
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        self.user = get_user_from_token(request)
 
     def get_queryset(self):
         return SavedPassword.objects.filter(user=self.request.user).order_by('-created')
