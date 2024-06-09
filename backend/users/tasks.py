@@ -17,4 +17,4 @@ def delete_token(token_id):
 def delete_expired_tokens():
     now = timezone.now()
     expiration_time = now - timedelta(minutes=30)
-    UserProfileToken.objects.filter(created_at__lt=expiration_time).delete()
+    UserProfileToken.objects.filter(created__lt=expiration_time).delete()

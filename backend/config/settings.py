@@ -37,12 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # internal apps
+    'users',
+    'manager',
+    # third party packages
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'django_celery_beat',
-    'users',
-    'manager',
 ]
 
 MIDDLEWARE = [
@@ -106,6 +109,7 @@ REST_FRAMEWORK = {
     # ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10,
+
 }
 
 # Celery Settings

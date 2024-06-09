@@ -24,7 +24,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         self.user = get_user_from_token(request)
 
     def get_queryset(self):
-        return Profile.objects.filter(user=self.user)
+        return Profile.objects.filter(user=self.user).order_by('-created')
 
     def perform_create(self, serializer):
         serializer = api_encrypt_profile_pin(serializer, self.user)
