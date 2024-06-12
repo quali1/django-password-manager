@@ -19,13 +19,13 @@ def login_view(request):
     user = get_object_or_404(User, username=request.data['username'])
 
     if not user.check_password(request.data['password']):
-        return Response({'error': 'Not found'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Incorrect password'}, status=status.HTTP_400_BAD_REQUEST)
 
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
 
     response = Response({'user': serializer.data}, status=status.HTTP_200_OK)
-    response.set_cookie(key='session_token', value=token, secure=True, httponly=True, samesite='None', max_age=2592000)
+    response.set_cookie(key='session_token', value=token, max_age=2592000)
 
     return response
 
