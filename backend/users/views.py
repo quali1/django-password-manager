@@ -25,7 +25,7 @@ def login_view(request):
     serializer = UserSerializer(instance=user)
 
     response = Response({'user': serializer.data}, status=status.HTTP_200_OK)
-    response.set_cookie(key='session_token', value=token, httponly=True, samesite='Lax', max_age=2592000)
+    response.set_cookie(key='session_token', value=token, secure=True, httponly=True, samesite='None', max_age=2592000)
 
     return response
 
@@ -41,7 +41,7 @@ def signup_view(request):
         token = Token.objects.create(user=user)
 
         response = Response({'user': serializer.data}, status=status.HTTP_201_CREATED)
-        response.set_cookie(key='session_token', value=token, httponly=True, samesite='Lax', max_age=2592000)
+        response.set_cookie(key='session_token', value=token, secure=True, httponly=True, samesite='None', max_age=2592000)
 
         return response
 
@@ -59,7 +59,7 @@ def logout_view(request):
         token.delete()
 
         response = Response({'success': True}, status=status.HTTP_200_OK)
-        response.delete_cookie('auth_token')
+        response.delete_cookie('auth_token', samesite='None')
 
         return response
     else:

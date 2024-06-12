@@ -41,8 +41,9 @@ const actions = {
       dispatch("error/setError", error.message, { root: true });
     }
   },
-  async logout() {
+  async logout({ commit }) {
     await logoutRequest();
+    commit("setAuthenticated", false);
     router.push({ name: "login" });
   },
 };

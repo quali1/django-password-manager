@@ -64,7 +64,6 @@ export default {
   watch: {
     passwords: {
       handler(val) {
-        console.log(val.length);
         if (!val.length) {
           this.getPasswords(this.passwordsLimit * 2);
         }
