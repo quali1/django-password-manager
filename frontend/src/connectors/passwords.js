@@ -4,11 +4,12 @@ import {
   axiosPostRequest,
 } from "@/connectors/helpers";
 
-async function getPasswordsRequest(limit, offset) {
+async function getPasswordsRequest(limit, offset, search) {
   try {
     return await axiosGetRequest("/api/saved-passwords/", {
       limit: limit,
       offset: offset,
+      website: search,
     });
   } catch (error) {
     convertAxiosErrors(error);

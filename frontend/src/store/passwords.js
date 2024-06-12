@@ -7,6 +7,7 @@ const initialState = {
   passwords: [],
   activePassword: null,
   passwordsLoaded: false,
+  search: "",
 };
 
 const getters = {};
@@ -23,6 +24,9 @@ const mutations = {
   setPasswordsLoaded(state, value) {
     state.passwordsLoaded = value;
   },
+  setSearch(state, search) {
+    state.search = search;
+  },
 };
 const actions = {
   addPasswords({ commit }, passwords) {
@@ -33,9 +37,13 @@ const actions = {
     commit("clearPasswords");
     commit("setPasswordsLoaded", false);
   },
+  setSearch({ dispatch, commit }, search) {
+    dispatch("clearPasswords");
+    commit("setSearch", search);
+  },
   async getPasswords({ commit, dispatch, state }, limit) {
     const offset = state.passwords.length;
-    const res = await getPasswordsRequest(limit, offset);
+    const res = await getPasswordsRequest(limit, offset, state.search);
 
     const newPasswords = res.data.results;
     dispatch("addPasswords", newPasswords);

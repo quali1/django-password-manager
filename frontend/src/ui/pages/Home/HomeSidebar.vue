@@ -8,7 +8,12 @@
     <div class="container">
       <div class="control">
         <div class="search-block">
-          <search-block />
+          <input-component
+            class="search"
+            :modelValue="search"
+            @update:modelValue="(value) => setSearch(value)"
+            placeholder="Search..."
+          />
           <burger-component :active="sidebarActive" @click="toggleSidebar" />
         </div>
         <icon-button-component class="button" @click="addPassword">
@@ -31,25 +36,27 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
-import SearchBlock from "@/ui/blocks/SearchBlock";
 import IconButtonComponent from "@/ui/components/IconButtonComponent";
 import BurgerComponent from "@/ui/components/BurgerComponent";
+import InputComponent from "@/ui/components/InputComponent";
 import HomePasswords from "@/ui/pages/Home/HomePasswords";
 
 export default {
   components: {
-    SearchBlock,
     IconButtonComponent,
+    InputComponent,
     HomePasswords,
     BurgerComponent,
   },
   computed: {
     ...mapState("home", ["sidebarActive"]),
+    ...mapState("passwords", ["search"]),
   },
   methods: {
     ...mapMutations("home", ["toggleSidebar"]),
+    ...mapActions("passwords", ["setSearch"]),
     addPassword() {
       this.$router.push({ name: "add-password" });
     },
@@ -81,6 +88,16 @@ export default {
 
 .control {
   padding: 0 $gap;
+}
+
+.search {
+  background: $gray-color;
+
+  & > * {
+    color: $black-color;
+    font-size: 20px;
+    letter-spacing: 3.6px;
+  }
 }
 
 .search-block {
