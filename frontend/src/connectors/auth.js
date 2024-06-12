@@ -1,16 +1,20 @@
-import { convertAxiosErrors, axiosRequest } from "@/connectors/helpers";
+import {
+  convertAxiosErrors,
+  axiosPostRequest,
+  axiosGetRequest,
+} from "@/connectors/helpers";
 
-async function logoutRequest(token) {
+async function logoutRequest() {
   try {
-    return await axiosRequest("POST", "/api/auth/logout/", {}, token);
+    return await axiosPostRequest("/api/auth/logout/", {});
   } catch (error) {
     convertAxiosErrors(error);
   }
 }
 
-async function sessionRequest(token) {
+async function sessionRequest() {
   try {
-    return await axiosRequest("POST", "/api/auth/session/", {}, token);
+    return await axiosGetRequest("/api/auth/session/", {});
   } catch (error) {
     convertAxiosErrors(error);
   }
@@ -18,7 +22,7 @@ async function sessionRequest(token) {
 
 async function loginRequest(username, password) {
   try {
-    return await axiosRequest("POST", "/api/auth/login/", {
+    return await axiosPostRequest("/api/auth/login/", {
       username: username,
       password: password,
     });
@@ -29,7 +33,7 @@ async function loginRequest(username, password) {
 
 async function signUpRequest(username, email, password) {
   try {
-    return await axiosRequest("POST", "/api/auth/signup/", {
+    return await axiosPostRequest("/api/auth/signup/", {
       username: username,
       email: email,
       password: password,

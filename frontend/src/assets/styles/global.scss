@@ -60,3 +60,7 @@ a {
 ::-webkit-scrollbar {
   width: 4px;
 }
+
+::placeholder {
+  opacity: $placeholder-opacity;
+}

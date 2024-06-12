@@ -11,7 +11,7 @@
       </template>
       <template #text>
         <slot name="text"></slot>
-        <span class="icon">></span>
+        <img class="icon" src="@/assets/images/array.svg" alt="Array" />
       </template>
     </icon-button-component>
     <expandable-component :active="active">
@@ -54,21 +54,19 @@ export default {
   border-radius: 0;
 }
 
-.content {
-  padding: $small-gap;
-}
-
 .icon {
-  right: calc($gap - 4px);
-  top: 6.5px;
   font-weight: 300;
   position: absolute;
-  font-size: 20px;
   color: $blue-color;
-  transition: transform $transition;
+  transition: transform $transition, top $transition;
+  transform: translateY(-50%) rotate(-90deg);
+  height: 28%;
+  top: 50%;
+  right: 16px;
 }
 
 .active .icon {
-  transform: rotate(90deg);
+  top: calc(50% + 1px);
+  transform: translateY(-50%);
 }
 </style>

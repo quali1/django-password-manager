@@ -40,5 +40,7 @@ export default {
   border: none;
   resize: none;
   padding-right: calc($gap / 3 * 2);
+  padding-left: 0;
+  margin-left: 0;
 }
 </style>

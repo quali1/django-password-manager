@@ -11,6 +11,7 @@
 .button {
   display: flex;
   align-items: center;
+  position: relative;
   padding: $elem-padding;
   border-radius: $border-radius;
   border: none;
@@ -23,7 +24,6 @@
 
 .text {
   letter-spacing: 3px;
-  text-indent: 3px;
   font-size: 15px;
 }
 </style>

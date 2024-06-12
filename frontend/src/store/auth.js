@@ -7,48 +7,23 @@ import {
 import router from "@/router";
 
 const initialState = {
-  isError: false,
-  timeouts: [],
-  error: "",
-  token: "",
+  authenticated: false,
 };
 
 const getters = {};
 const mutations = {
-  setToken(state, token) {
-    state.token = token;
-  },
-  setError(state, message) {
-    state.error = message;
-  },
-  setIsError(state, isError) {
-    state.isError = isError;
-  },
-  setTimeouts(state, timeouts) {
-    state.timeouts = timeouts;
+  setAuthenticated(state, authenticated) {
+    state.authenticated = authenticated;
   },
 };
 const actions = {
-  saveToken({ commit }, token) {
-    localStorage.setItem("token", token);
-    commit("setToken", token);
-  },
-  clearToken({ commit }) {
-    localStorage.setItem("token", "");
-    commit("setToken", "");
-  },
   async session({ commit }) {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const res = await sessionRequest(token);
-        console.log(res);
-        commit("setToken", token);
-        router.push({ name: "home" });
-      } catch {
-        localStorage.setItem("token", "");
-        router.push({ name: "login" });
-      }
+    try {
+      await sessionRequest();
+      commit("setAuthenticated", true);
+      router.push({ name: "home" });
+    } catch {
+      router.push({ name: "login" });
     }
   },
   async login({ dispatch }, data) {
@@ -57,40 +32,18 @@ const actions = {
   async signUp({ dispatch }, data) {
     await dispatch("auth", [signUpRequest, data]);
   },
-  async auth({ dispatch }, [authRequest, data]) {
+  async auth({ dispatch, commit }, [authRequest, data]) {
     try {
-      const res = await authRequest(...data);
-      dispatch("saveToken", res.data.token);
+      await authRequest(...data);
+      commit("setAuthenticated", true);
       router.push({ name: "home" });
     } catch (error) {
-      dispatch("setError", error.message);
+      dispatch("error/setError", error.message, { root: true });
     }
   },
-  async logout({ dispatch, state }) {
-    const res = await logoutRequest(state.token);
-    console.log(res);
-    dispatch("clearToken");
+  async logout() {
+    await logoutRequest();
     router.push({ name: "login" });
-  },
-  setError({ dispatch, commit }, message) {
-    dispatch("clearError");
-
-    commit("setError", message);
-    commit("setIsError", !!message);
-
-    const t1 = setTimeout(() => {
-      commit("setIsError", false);
-    }, 4000);
-    const t2 = setTimeout(() => {
-      commit("setError", "");
-    }, 4000 + 1000);
-    commit("setTimeouts", [t1, t2]);
-  },
-  clearError({ commit, state }) {
-    commit("setError", "");
-    commit("setIsError", false);
-    state.timeouts.forEach((id) => clearTimeout(id));
-    commit("setTimeouts", []);
   },
 };
 

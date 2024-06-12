@@ -2,29 +2,23 @@
   <auth-layout>
     <template #inputs>
       <input-component
-        :class="{
-          'input-error': !username && isError,
-        }"
+        :error="!username && isError"
         v-model="username"
         placeholder="Username"
       />
       <input-component
-        :class="{
-          'input-error': !password && isError,
-        }"
         v-model="password"
         placeholder="Password"
+        :error="!password && isError"
         :hide="true"
-        @keyup.enter="submit()"
+        @keyup.enter="submit"
       />
     </template>
     <template #buttons>
-      <button-component @click="submit()">Login</button-component>
+      <button-component @click="submit">Login</button-component>
     </template>
     <template #errors>
-      <expandable-component class="error-log" :active="isError">
-        <div class="container">{{ error }}</div>
-      </expandable-component>
+      <error-component />
     </template>
     <template #links>
       <router-link :to="{ name: 'registration' }">
@@ -40,14 +34,14 @@ import { mapState, mapActions } from "vuex";
 
 import InputComponent from "@/ui/components/InputComponent";
 import ButtonComponent from "@/ui/components/ButtonComponent";
-import ExpandableComponent from "@/ui/components/ExpandableComponent";
+import ErrorComponent from "@/ui/components/ErrorComponent";
 import AuthLayout from "@/ui/layouts/AuthLayout";
 
 export default {
   components: {
     InputComponent,
     ButtonComponent,
-    ExpandableComponent,
+    ErrorComponent,
     AuthLayout,
   },
   data() {
@@ -57,10 +51,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("auth", ["error", "isError"]),
+    ...mapState("error", ["isError"]),
   },
   methods: {
-    ...mapActions("auth", ["login", "setError", "clearError"]),
+    ...mapActions("auth", ["login"]),
+    ...mapActions("error", ["setError"]),
     submit() {
       if (!(this.username && this.password)) {
         this.setError("Fill in all the fields!");
@@ -69,22 +64,5 @@ export default {
       }
     },
   },
-  mounted() {
-    this.clearError();
-  },
 };
 </script>
-
-<style lang="scss" scoped>
-.error-log:not(.active) {
-  opacity: 0;
-}
-
-.input-error > * {
-  color: $red-color;
-}
-
-.container {
-  height: calc($gap * 2 - 8px + 18px);
-}
-</style>

@@ -66,6 +66,8 @@ CORS_ALLOW_HEADERS = [
     "token",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [

@@ -1,22 +1,12 @@
+import {
+  getPasswordsRequest,
+  addPasswordRequest,
+} from "@/connectors/passwords";
+
 const initialState = {
-  passwords: [
-    { id: 1, title: "passwosd1" },
-    { id: 2, title: "password2" },
-    { id: 3, title: "password3" },
-    { id: 4, title: "password4" },
-    { id: 5, title: "password5" },
-    { id: 6, title: "password6" },
-    { id: 7, title: "password7" },
-    { id: 8, title: "password8" },
-    { id: 9, title: "password9" },
-    { id: 10, title: "password10" },
-    { id: 11, title: "password11" },
-    { id: 12, title: "password12" },
-    { id: 13, title: "password13" },
-    { id: 14, title: "password14" },
-    { id: 15, title: "password15" },
-  ],
+  passwords: [],
   activePassword: null,
+  passwordsLoaded: false,
 };
 
 const getters = {};
@@ -24,8 +14,52 @@ const mutations = {
   selectPassword(state, password) {
     state.activePassword = password;
   },
+  addPasswords(state, passwords) {
+    state.passwords.push(...passwords);
+  },
+  clearPasswords(state) {
+    state.passwords = [];
+  },
+  setPasswordsLoaded(state, value) {
+    state.passwordsLoaded = value;
+  },
 };
-const actions = {};
+const actions = {
+  addPasswords({ commit }, passwords) {
+    commit("addPasswords", passwords);
+    commit("setPasswordsLoaded", false);
+  },
+  clearPasswords({ commit }) {
+    commit("clearPasswords");
+    commit("setPasswordsLoaded", false);
+  },
+  async getPasswords({ commit, dispatch, state }, limit) {
+    const offset = state.passwords.length;
+    const res = await getPasswordsRequest(limit, offset);
+
+    const newPasswords = res.data.results;
+    dispatch("addPasswords", newPasswords);
+
+    if (!res.data.next) {
+      commit("setPasswordsLoaded", true);
+    }
+  },
+  async addPassword(
+    { dispatch },
+    { username, password, website = null, note = null, profile = null }
+  ) {
+    const passwordObj = {
+      username: username,
+      password: password,
+      website: website,
+      note: note,
+      profile: profile,
+    };
+    const res = await addPasswordRequest(passwordObj);
+    console.log(res);
+    dispatch("clearPasswords");
+  },
+};
 
 export default {
   namespaced: true,
