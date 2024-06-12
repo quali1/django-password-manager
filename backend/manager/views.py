@@ -1,11 +1,8 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import FilterSet, OrderingFilter
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-
-from users.services import get_user_from_token
-
 from config.api.filters import PSManagerFilter
+from users.services import get_user_from_token
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
+
 from .models import SavedPassword
 from .serializers import PSManagerSerializer
 from .services import api_encrypt_password

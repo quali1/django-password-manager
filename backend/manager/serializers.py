@@ -8,7 +8,7 @@ class PSManagerSerializer(serializers.ModelSerializer):
         model = SavedPassword
         read_only_fields = ('user',)
         write_only_fields = ('key',)
-        fields = ['user', 'profile', 'password', 'website', 'note', 'created', 'updated']
+        fields = ['id', 'user', 'profile', 'password', 'website', 'note', 'created', 'updated']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
