@@ -11,7 +11,7 @@
           <search-block />
           <burger-component :active="sidebarActive" @click="toggleSidebar" />
         </div>
-        <icon-button-component class="button" @click="togglePopUp">
+        <icon-button-component class="button" @click="addPassword">
           <template #icon>
             <img src="@/assets/images/plus.svg" alt="Add" />
           </template>
@@ -49,7 +49,10 @@ export default {
     ...mapState("home", ["sidebarActive"]),
   },
   methods: {
-    ...mapMutations("home", ["toggleSidebar", "togglePopUp"]),
+    ...mapMutations("home", ["toggleSidebar"]),
+    addPassword() {
+      this.$router.push({ name: "add-password" });
+    },
   },
 };
 </script>
@@ -61,7 +64,7 @@ export default {
   max-width: $sidebar-max-width;
   width: 100%;
   transition: width $transition ease;
-  overflow-y: hidden;
+  overflow: hidden;
   z-index: $sidebar-z-index;
 
   &:not(.active) {
@@ -107,7 +110,7 @@ export default {
 }
 
 .button-text {
-  margin-left: 12px;
+  margin-left: 14px;
 }
 
 @media screen and (max-width: $hide-sidebar-width) {

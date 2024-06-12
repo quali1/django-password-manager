@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import HomeView from "@/ui/pages/Home/HomeView";
+import HomeAddPasswordContent from "@/ui/pages/Home/Content/HomeAddPasswordContent";
+import HomeDefaultContent from "@/ui/pages/Home/Content/HomeDefaultContent";
 import LoginView from "@/ui/pages/Login/LoginView";
 import RegistrationView from "@/ui/pages/Registration/RegistrationView";
 
@@ -18,8 +21,19 @@ const routes = [
   },
   {
     path: "/",
-    name: "home",
     component: HomeView,
+    children: [
+      {
+        path: "",
+        name: "home",
+        component: HomeDefaultContent,
+      },
+      {
+        path: "add-password",
+        name: "add-password",
+        component: HomeAddPasswordContent,
+      },
+    ],
     meta: { requiresAuth: true },
   },
 ];

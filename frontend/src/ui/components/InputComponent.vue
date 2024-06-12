@@ -1,5 +1,10 @@
 <template>
-  <div class="input">
+  <div
+    class="input"
+    :class="{
+      error: error,
+    }"
+  >
     <input
       class="field"
       :type="fieldType"
@@ -19,12 +24,12 @@
       >
         <img
           class="hide"
-          src="@/assets/images/hide-pass.svg"
+          src="@/assets/images/show-pass.svg"
           alt="Hide password"
         />
         <img
           class="show"
-          src="@/assets/images/show-pass.svg"
+          src="@/assets/images/hide-pass.svg"
           alt="Show password"
         />
       </button>
@@ -41,6 +46,9 @@ export default {
     },
     placeholder: {
       type: String,
+    },
+    error: {
+      type: Boolean,
     },
     hide: {
       type: Boolean,
@@ -70,6 +78,10 @@ export default {
   align-items: center;
   height: $elem-height;
   border-radius: $border-radius;
+
+  &.error > * {
+    color: $red-color;
+  }
 }
 
 .field {

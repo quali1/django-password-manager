@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="auth">
     <div class="inputs">
       <slot name="inputs"></slot>
     </div>
@@ -18,7 +18,7 @@
 </template>
 
 <style lang="scss" scoped>
-.login {
+.auth {
   height: 100%;
   display: flex;
   gap: 36px;
@@ -60,12 +60,6 @@
 .text {
   text-align: center;
   margin-top: -5px;
-}
-
-.errors > * {
-  color: $red-color;
-  font-size: 18px;
-  letter-spacing: 3.6px;
 }
 
 .links {

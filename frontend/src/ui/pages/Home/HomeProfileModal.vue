@@ -92,9 +92,7 @@ export default {
 }
 
 .logout,
-.settings,
-.profiles-button > *:nth-child(1) {
-  font-size: 15px;
+.settings {
   height: $small-elem-height;
   letter-spacing: 3.8px;
   background: $main-color;
@@ -103,6 +101,14 @@ export default {
 
 .profiles-button > * {
   background: $main-color;
+
+  &:nth-child(1) {
+    height: $small-elem-height;
+    font-weight: 400;
+  }
+  &:nth-child(2) > * {
+    padding: $small-gap;
+  }
 }
 
 .logout {
@@ -112,7 +118,7 @@ export default {
 }
 
 .button-text {
-  margin-left: 10px;
+  margin-left: 13px;
   color: $blue-color;
 }
 

@@ -13,10 +13,14 @@ function parseErrorData(data) {
   }
 }
 
-async function axiosRequest(method, subUrl, data, token = "") {
-  const headers = {
-    "Content-Type": "application/json",
-  };
+async function axiosRequest({
+  method,
+  subUrl,
+  headers = {},
+  data = {},
+  params = {},
+  token = "",
+}) {
   if (token) {
     headers["token"] = token;
   }
@@ -25,11 +29,36 @@ async function axiosRequest(method, subUrl, data, token = "") {
     method: method,
     url: BASE_URL + subUrl,
     headers: headers,
-    data: JSON.stringify(data),
+    data: data,
+    params: params,
+  });
+}
+
+async function axiosGetRequest(subUrl, params, token = null) {
+  return await axiosRequest({
+    method: "get",
+    subUrl: subUrl,
+    params: params,
+    token: token,
+  });
+}
+
+async function axiosPostRequest(subUrl, data, token = null) {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  return await axiosRequest({
+    method: "post",
+    subUrl: subUrl,
+    headers: headers,
+    data: data,
+    token: token,
   });
 }
 
 function convertAxiosErrors(error) {
+  // TODO: Catch problems with token -> logout
   if (error.response) {
     throw Error(parseErrorData(error.response.data));
   } else if (error.request) {
@@ -39,4 +68,4 @@ function convertAxiosErrors(error) {
   }
 }
 
-export { convertAxiosErrors, axiosRequest };
+export { convertAxiosErrors, axiosGetRequest, axiosPostRequest };

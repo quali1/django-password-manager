@@ -7,9 +7,6 @@ import {
 import router from "@/router";
 
 const initialState = {
-  isError: false,
-  timeouts: [],
-  error: "",
   token: "",
 };
 
@@ -17,15 +14,6 @@ const getters = {};
 const mutations = {
   setToken(state, token) {
     state.token = token;
-  },
-  setError(state, message) {
-    state.error = message;
-  },
-  setIsError(state, isError) {
-    state.isError = isError;
-  },
-  setTimeouts(state, timeouts) {
-    state.timeouts = timeouts;
   },
 };
 const actions = {
@@ -41,8 +29,7 @@ const actions = {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const res = await sessionRequest(token);
-        console.log(res);
+        await sessionRequest(token);
         commit("setToken", token);
         router.push({ name: "home" });
       } catch {
@@ -63,34 +50,13 @@ const actions = {
       dispatch("saveToken", res.data.token);
       router.push({ name: "home" });
     } catch (error) {
-      dispatch("setError", error.message);
+      dispatch("error/setError", error.message, { root: true });
     }
   },
   async logout({ dispatch, state }) {
-    const res = await logoutRequest(state.token);
-    console.log(res);
+    await logoutRequest(state.token);
     dispatch("clearToken");
     router.push({ name: "login" });
-  },
-  setError({ dispatch, commit }, message) {
-    dispatch("clearError");
-
-    commit("setError", message);
-    commit("setIsError", !!message);
-
-    const t1 = setTimeout(() => {
-      commit("setIsError", false);
-    }, 4000);
-    const t2 = setTimeout(() => {
-      commit("setError", "");
-    }, 4000 + 1000);
-    commit("setTimeouts", [t1, t2]);
-  },
-  clearError({ commit, state }) {
-    commit("setError", "");
-    commit("setIsError", false);
-    state.timeouts.forEach((id) => clearTimeout(id));
-    commit("setTimeouts", []);
   },
 };
 
