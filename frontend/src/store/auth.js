@@ -7,35 +7,23 @@ import {
 import router from "@/router";
 
 const initialState = {
-  token: "",
+  authenticated: false,
 };
 
 const getters = {};
 const mutations = {
-  setToken(state, token) {
-    state.token = token;
+  setAuthenticated(state, authenticated) {
+    state.authenticated = authenticated;
   },
 };
 const actions = {
-  saveToken({ commit }, token) {
-    localStorage.setItem("token", token);
-    commit("setToken", token);
-  },
-  clearToken({ commit }) {
-    localStorage.setItem("token", "");
-    commit("setToken", "");
-  },
   async session({ commit }) {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        await sessionRequest(token);
-        commit("setToken", token);
-        router.push({ name: "home" });
-      } catch {
-        localStorage.setItem("token", "");
-        router.push({ name: "login" });
-      }
+    try {
+      await sessionRequest();
+      commit("setAuthenticated", true);
+      router.push({ name: "home" });
+    } catch {
+      router.push({ name: "login" });
     }
   },
   async login({ dispatch }, data) {
@@ -44,18 +32,17 @@ const actions = {
   async signUp({ dispatch }, data) {
     await dispatch("auth", [signUpRequest, data]);
   },
-  async auth({ dispatch }, [authRequest, data]) {
+  async auth({ dispatch, commit }, [authRequest, data]) {
     try {
-      const res = await authRequest(...data);
-      dispatch("saveToken", res.data.token);
+      await authRequest(...data);
+      commit("setAuthenticated", true);
       router.push({ name: "home" });
     } catch (error) {
       dispatch("error/setError", error.message, { root: true });
     }
   },
-  async logout({ dispatch, state }) {
-    await logoutRequest(state.token);
-    dispatch("clearToken");
+  async logout() {
+    await logoutRequest();
     router.push({ name: "login" });
   },
 };

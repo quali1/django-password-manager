@@ -1,16 +1,20 @@
-import { convertAxiosErrors, axiosPostRequest } from "@/connectors/helpers";
+import {
+  convertAxiosErrors,
+  axiosPostRequest,
+  axiosGetRequest,
+} from "@/connectors/helpers";
 
-async function logoutRequest(token) {
+async function logoutRequest() {
   try {
-    return await axiosPostRequest("/api/auth/logout/", {}, token);
+    return await axiosPostRequest("/api/auth/logout/", {});
   } catch (error) {
     convertAxiosErrors(error);
   }
 }
 
-async function sessionRequest(token) {
+async function sessionRequest() {
   try {
-    return await axiosPostRequest("/api/auth/session/", {}, token);
+    return await axiosGetRequest("/api/auth/session/", {});
   } catch (error) {
     convertAxiosErrors(error);
   }

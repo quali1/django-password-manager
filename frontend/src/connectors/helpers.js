@@ -19,12 +19,7 @@ async function axiosRequest({
   headers = {},
   data = {},
   params = {},
-  token = "",
 }) {
-  if (token) {
-    headers["token"] = token;
-  }
-
   return await axios({
     method: method,
     url: BASE_URL + subUrl,
@@ -34,16 +29,15 @@ async function axiosRequest({
   });
 }
 
-async function axiosGetRequest(subUrl, params, token = null) {
+async function axiosGetRequest(subUrl, params) {
   return await axiosRequest({
     method: "get",
     subUrl: subUrl,
     params: params,
-    token: token,
   });
 }
 
-async function axiosPostRequest(subUrl, data, token = null) {
+async function axiosPostRequest(subUrl, data) {
   const headers = {
     "Content-Type": "application/json",
   };
@@ -53,7 +47,6 @@ async function axiosPostRequest(subUrl, data, token = null) {
     subUrl: subUrl,
     headers: headers,
     data: data,
-    token: token,
   });
 }
 

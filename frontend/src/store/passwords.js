@@ -33,10 +33,9 @@ const actions = {
     commit("clearPasswords");
     commit("setPasswordsLoaded", false);
   },
-  async getPasswords({ commit, dispatch, state, rootState }, limit) {
+  async getPasswords({ commit, dispatch, state }, limit) {
     const offset = state.passwords.length;
-    const token = rootState.auth.token;
-    const res = await getPasswordsRequest(limit, offset, token);
+    const res = await getPasswordsRequest(limit, offset);
 
     const newPasswords = res.data.results;
     dispatch("addPasswords", newPasswords);
@@ -46,10 +45,9 @@ const actions = {
     }
   },
   async addPassword(
-    { dispatch, rootState },
+    { dispatch },
     { username, password, website = null, note = null, profile = null }
   ) {
-    const token = rootState.auth.token;
     const passwordObj = {
       username: username,
       password: password,
@@ -57,7 +55,7 @@ const actions = {
       note: note,
       profile: profile,
     };
-    const res = await addPasswordRequest(passwordObj, token);
+    const res = await addPasswordRequest(passwordObj);
     console.log(res);
     dispatch("clearPasswords");
   },
