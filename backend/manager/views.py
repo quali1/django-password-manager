@@ -33,7 +33,7 @@ class PSManagerViewSet(viewsets.ModelViewSet):
         self.user = get_user_from_token(request)
 
     def get_queryset(self):
-        return SavedPassword.objects.filter(user=self.request.user).order_by('-created')
+        return SavedPassword.objects.filter(user=self.user).order_by('-created')
 
     def perform_create(self, serializer):
         serializer = api_encrypt_password(serializer, self.user)
