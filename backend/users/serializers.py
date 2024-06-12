@@ -1,3 +1,4 @@
+from manager.serializers import PSManagerSerializer
 from .models import Profile, ProfileCategories
 from rest_framework import serializers
 from django.contrib.auth.models import User
@@ -10,9 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    category = serializers.StringRelatedField()
+    saved_passwords = PSManagerSerializer(many=True, read_only=True)
+
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['id', 'user', 'category', 'pin', 'created', 'updated', 'saved_passwords']
 
     def validate_pin(self, value):
         if not value.isdigit():

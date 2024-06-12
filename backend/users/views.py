@@ -25,7 +25,7 @@ def login_view(request):
     serializer = UserSerializer(instance=user)
 
     response = Response({'user': serializer.data}, status=status.HTTP_200_OK)
-    response.set_cookie(key='session_token', value=token, httponly=True, samesite='None', max_age=2592000)
+    response.set_cookie(key='session_token', value=token, secure=True, httponly=True, samesite='None', max_age=2592000)
 
     return response
 
@@ -41,7 +41,8 @@ def signup_view(request):
         token = Token.objects.create(user=user)
 
         response = Response({'user': serializer.data}, status=status.HTTP_201_CREATED)
-        response.set_cookie(key='session_token', value=token, httponly=True, samesite='None', max_age=2592000)
+        response.set_cookie(key='session_token', value=token, secure=True, httponly=True, samesite='None',
+                            max_age=2592000)
 
         return response
 
@@ -69,6 +70,7 @@ def logout_view(request):
 @api_view(['GET'])
 def get_session_info_view(request):
     token_key = request.COOKIES.get('session_token')
+    profile_session_token = request.COOKIES.get('profile_session_token')
 
     if not token_key:
         return Response({'error': 'Token not provided'}, status=status.HTTP_400_BAD_REQUEST)
@@ -76,10 +78,19 @@ def get_session_info_view(request):
     token = Token.objects.get(key=token_key)
     if not token:
         return Response({'error': 'Token not found'}, status=status.HTTP_401_UNAUTHORIZED)
-
     user = token.user
-    return Response({'user_id': user.id, 'username': user.username, 'email': user.email},
-                    status=status.HTTP_201_CREATED)
+
+    response_data = {
+        'user_id': user.id,
+        'username': user.username,
+        'email': user.email
+    }
+
+    if profile_session_token:
+        profile = Profile.objects.get(token__key=profile_session_token)
+        response_data['profile'] = ProfileSerializer(instance=profile).data
+
+    return Response(response_data, status=status.HTTP_200_OK)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -120,10 +131,12 @@ def check_profile_pin_view(request):
 
 @api_view(['POST'])
 def enter_profile_view(request):
-    user = request.user
+    user = get_user_from_token(request)
     profile_id = request.data.get('profile_id')
+    profile = Profile.objects.get(id=profile_id, user=user)
 
-    profile = get_object_or_404(Profile, id=profile_id, user=user)
+    if not profile:
+        return Response({'error': 'Profile does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
     UserProfileToken.objects.filter(user=user, profile=profile).delete()
 
@@ -131,9 +144,12 @@ def enter_profile_view(request):
     user_profile_token = UserProfileToken.objects.create(
         user=user,
         profile=profile,
-        token=token
+        key=token
     )
 
     delete_token.apply_async((user_profile_token.id,), countdown=1800)
 
-    return Response({'token': token}, status=status.HTTP_201_CREATED)
+    response = Response({'success': True}, status=status.HTTP_201_CREATED)
+    response.set_cookie(key='profile_session_token', value=token, max_age=1800)
+
+    return response
