@@ -131,17 +131,28 @@ def check_profile_pin_view(request):
 
 @api_view(['POST'])
 def enter_profile_view(request):
+    pue = PasswordUserEncryption()
     user = get_user_from_token(request)
+
     profile_id = request.data.get('profile_id')
+    pin = request.data.get('pin')
     profile = Profile.objects.get(id=profile_id, user=user)
 
     if not profile:
         return Response({'error': 'Profile does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    UserProfileToken.objects.filter(user=user, profile=profile).delete()
+    if not pin and profile.pin:
+        return Response({'error': 'Pin is not provided for secure profile.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if pin and profile.pin:
+        hashed_pin = get_object_or_404(Profile, id=profile_id).pin
+        check_result = pue.check_password(pin, hashed_pin)
+
+        if not check_result:
+            return Response({'error': 'Provided pin is incorrect.'}, status=status.HTTP_403_FORBIDDEN)
 
     token = str(uuid.uuid4())
-    user_profile_token = UserProfileToken.objects.get_or_create(
+    user_profile_token = UserProfileToken.objects.create(
         user=user,
         profile=profile,
         key=token
