@@ -10,6 +10,7 @@
       :type="fieldType"
       :value="modelValue"
       :placeholder="placeholder"
+      @keypress="filter($event)"
       @input="$emit('update:modelValue', $event.target.value)"
     />
     <div v-if="hide" class="control">
@@ -53,6 +54,9 @@ export default {
     hide: {
       type: Boolean,
     },
+    type: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -61,12 +65,34 @@ export default {
   },
   computed: {
     fieldType() {
-      return this.isVisible || !this.hide ? "text" : "password";
+      const type = this.type || "text";
+
+      if (this.hide) {
+        return this.isVisible ? type : "password";
+      } else {
+        return type;
+      }
     },
   },
   methods: {
     toggleVisibility() {
       this.isVisible = !this.isVisible;
+    },
+    filter(evt) {
+      if (this.type === "number") {
+        if (!this.isNumber(evt)) {
+          evt.preventDefault();
+        }
+      }
+    },
+    isNumber(evt) {
+      evt = evt || window.event;
+      var charCode = evt.which || evt.keyCode;
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+      } else {
+        return true;
+      }
     },
   },
 };

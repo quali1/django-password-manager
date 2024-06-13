@@ -12,7 +12,9 @@
       <avatar-component class="avatar"></avatar-component>
       <span class="title">{{ profile.title.substring(0, 6) }}</span>
     </div>
-    <div class="profile"><span class="title">Add Profile</span></div>
+    <div class="profile" @click="addProfile">
+      <span class="title">Add Profile</span>
+    </div>
   </div>
 </template>
 
@@ -30,6 +32,9 @@ export default {
   },
   methods: {
     ...mapMutations("profiles", ["selectProfile"]),
+    addProfile() {
+      this.$router.push({ name: "add-profile" });
+    },
   },
 };
 </script>

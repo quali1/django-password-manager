@@ -1,35 +1,24 @@
 <template>
-  <div class="add-password">
+  <div class="add-profile">
     <add-form-layout>
       <template #inputs>
         <input-component
-          class="input username"
-          v-model="username"
+          class="input title"
+          v-model="title"
           placeholder="Username"
-          :error="!username && isError"
-        />
-        <input-component
-          class="input password"
-          v-model="password"
-          placeholder="Password"
-          :error="!password && isError"
-          :hide="true"
-        />
-        <input-component
-          class="input website"
-          v-model="website"
-          :error="!website && isError"
-          placeholder="Website"
+          :error="!title && isError"
         />
         <expandable-button-component class="notes-button">
           <template #text>
-            <span class="button-text">Notes</span>
+            <span class="button-text">Pin</span>
           </template>
           <template #content>
-            <textarea-component
-              class="textarea notes"
-              v-model="notes"
-              placeholder="Write your notes here..."
+            <input-component
+              class="input pin"
+              v-model="pin"
+              :error="!pin && isError"
+              :hide="true"
+              :type="'number'"
             />
           </template>
         </expandable-button-component>
@@ -46,7 +35,6 @@ import { mapActions, mapState } from "vuex";
 
 import InputComponent from "@/ui/components/InputComponent";
 import ButtonComponent from "@/ui/components/ButtonComponent";
-import TextareaComponent from "@/ui/components/TextareaComponent";
 import ExpandableButtonComponent from "@/ui/components/ExpandableButtonComponent";
 import AddFormLayout from "@/ui/layouts/AddFormLayout";
 
@@ -54,33 +42,28 @@ export default {
   components: {
     InputComponent,
     ButtonComponent,
-    TextareaComponent,
     ExpandableButtonComponent,
     AddFormLayout,
   },
   data() {
     return {
-      username: "",
-      password: "",
-      website: "",
-      notes: "",
+      title: "",
+      pin: "",
     };
   },
   computed: {
     ...mapState("error", ["isError"]),
   },
   methods: {
-    ...mapActions("passwords", ["addPassword"]),
+    ...mapActions("profiles", ["addProfiles"]),
     ...mapActions("error", ["setError"]),
     submit() {
-      if (!(this.website && this.username && this.password)) {
+      if (!this.title) {
         this.setError("Fill in all the fields!");
       } else {
-        this.addPassword({
-          username: this.username,
-          password: this.password,
-          website: this.website,
-          notes: this.notes,
+        this.addProfiles({
+          title: this.title,
+          pin: this.pin,
         });
       }
     },
@@ -89,6 +72,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.input {
+  background: $dark-main-color;
+  width: 100%;
+
+  & > * {
+    color: $dark-text-color;
+    font-size: 20px;
+    letter-spacing: 3.6px;
+    transition: color $transition;
+  }
+}
+
+.pin {
+  margin-top: 0;
+}
+
 .notes-button > * {
   background: $dark-main-color;
 
@@ -97,7 +96,7 @@ export default {
   }
 
   &:nth-child(2) > * {
-    padding: $small-gap 0;
+    padding: 0;
   }
 }
 
@@ -112,24 +111,5 @@ export default {
   width: 20px;
   display: flex;
   justify-content: center;
-}
-
-.textarea {
-  height: 150px;
-}
-
-.input {
-  background: $dark-main-color;
-  width: 100%;
-}
-
-.input,
-.textarea {
-  & > * {
-    color: $dark-text-color;
-    font-size: 20px;
-    letter-spacing: 3.6px;
-    transition: color $transition;
-  }
 }
 </style>

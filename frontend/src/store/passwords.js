@@ -67,13 +67,17 @@ const actions = {
       note: note,
       profile: profile,
     };
-    const res = await addPasswordRequest(passwordObj);
 
-    if (!res) {
-      return;
+    try {
+      const res = await addPasswordRequest(passwordObj);
+
+      if (!res) {
+        return;
+      }
+    } catch (error) {
+      dispatch("error/setError", error.message, { root: true });
     }
 
-    console.log(res);
     dispatch("clearPasswords");
   },
 };
