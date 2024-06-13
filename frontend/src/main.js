@@ -6,6 +6,21 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  function (error) {
+    if (error.response.status === 500) {
+      store.commit("auth/setAuthenticated", false);
+      router.push({ name: "login" });
+      return;
+    } else {
+      return Promise.rej(error);
+    }
+  }
+);
+
 router.beforeEach(async (to, from, next) => {
   const authenticated = store.state.auth.authenticated;
 
@@ -17,4 +32,5 @@ router.beforeEach(async (to, from, next) => {
 });
 
 createApp(App).use(store).use(router).mount("#app");
+
 store.dispatch("auth/session");
