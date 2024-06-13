@@ -1,8 +1,8 @@
 import uuid
 
 from manager.encryption import PasswordUserEncryption
-from .serializers import UserSerializer, ProfileSerializer, UserProfileTokenSerializer
-from .models import Profile, ProfileCategories, UserProfileToken
+from .serializers import UserSerializer, ProfileSerializer
+from .models import Profile, UserProfileToken
 from .services import api_encrypt_profile_pin, get_user_from_token
 from .tasks import delete_token
 
@@ -141,7 +141,7 @@ def enter_profile_view(request):
     UserProfileToken.objects.filter(user=user, profile=profile).delete()
 
     token = str(uuid.uuid4())
-    user_profile_token = UserProfileToken.objects.create(
+    user_profile_token = UserProfileToken.objects.get_or_create(
         user=user,
         profile=profile,
         key=token
