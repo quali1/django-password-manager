@@ -18,13 +18,13 @@ const mutations = {
 };
 const actions = {
   async session({ commit }) {
-    try {
-      await sessionRequest();
-      commit("setAuthenticated", true);
-      router.push({ name: "home" });
-    } catch {
-      router.push({ name: "login" });
+    const res = await sessionRequest();
+    if (!res) {
+      return;
     }
+
+    commit("setAuthenticated", true);
+    router.push({ name: "home" });
   },
   async login({ dispatch }, data) {
     await dispatch("auth", [loginRequest, data]);
@@ -42,7 +42,11 @@ const actions = {
     }
   },
   async logout({ commit }) {
-    await logoutRequest();
+    const res = await logoutRequest();
+    if (!res) {
+      return;
+    }
+
     commit("setAuthenticated", false);
     router.push({ name: "login" });
   },

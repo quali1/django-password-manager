@@ -45,6 +45,10 @@ const actions = {
     const offset = state.passwords.length;
     const res = await getPasswordsRequest(limit, offset, state.search);
 
+    if (!res) {
+      return;
+    }
+
     const newPasswords = res.data.results;
     dispatch("addPasswords", newPasswords);
 
@@ -64,6 +68,11 @@ const actions = {
       profile: profile,
     };
     const res = await addPasswordRequest(passwordObj);
+
+    if (!res) {
+      return;
+    }
+
     console.log(res);
     dispatch("clearPasswords");
   },
